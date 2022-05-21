@@ -1,15 +1,20 @@
 package com.example.paymentapi.models;
 
-import com.sun.istack.NotNull;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 public class PaymentRequest {
 
-  @NotNull
+  @NotBlank
+  @Positive
   private String amount;
-  @NotNull
+  @NotBlank
+  @Pattern(regexp = "^(LV\\d{2}[A-Z]{4}\\d{13})|((?:EE|LT)\\d{18})$")
   private String debtorIban;
 
   public PaymentRequest(String amount, String debtorIban) {

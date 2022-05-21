@@ -16,8 +16,7 @@ public class Payment {
   @Id
   @Column(name = "ID")
   private String id;
-
-
+  
   @Column(name = "AMOUNT")
   private BigDecimal amount;
 
