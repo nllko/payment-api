@@ -3,8 +3,7 @@ package com.example.paymentapi.controller;
 import com.example.paymentapi.models.Payment;
 import com.example.paymentapi.models.PaymentRequest;
 import com.example.paymentapi.service.PaymentService;
-import com.univocity.parsers.csv.CsvParser;
-import com.univocity.parsers.csv.CsvParserSettings;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
@@ -29,28 +28,16 @@ public class PaymentController {
 
   @PostMapping("/payments")
   @ResponseStatus(HttpStatus.CREATED)
-  public Payment savePayment(@Valid @RequestBody PaymentRequest paymentRequest, HttpServletRequest httpServletRequest) {
-    Payment payment = paymentRequest.toDomain();
-    payment.setCallerCountry(paymentService.getCountryCode(httpServletRequest));
-    paymentService.savePayment(payment);
-    return payment;
+  public void savePayment(@Valid @RequestBody PaymentRequest paymentRequest,
+      HttpServletRequest httpServletRequest) {
+    paymentService.savePayment(paymentRequest, httpServletRequest);
   }
 
   @PostMapping("/payment-files")
   @ResponseStatus(HttpStatus.CREATED)
-  public String savePaymentsFromCsv(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest) throws Exception {
-    CsvParserSettings settings = new CsvParserSettings();
-    settings.setHeaderExtractionEnabled(true);
-    CsvParser parser = new CsvParser(settings);
-    parser.parseAllRecords(file.getInputStream()).forEach(record -> {
-      PaymentRequest paymentRequest = new PaymentRequest(
-          record.getString("amount"),
-          record.getString("debtorIban"));
-      Payment payment = paymentRequest.toDomain();
-      payment.setCallerCountry(paymentService.getCountryCode(httpServletRequest));
-      paymentService.savePayment(payment);
-    });
-    return "success";
+  public void savePaymentsFromCsv(@RequestParam("file") MultipartFile file,
+      HttpServletRequest request) throws IOException {
+    paymentService.savePaymentFromCsv(file, request);
   }
 
   @GetMapping("/payments")

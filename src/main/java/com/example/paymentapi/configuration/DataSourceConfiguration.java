@@ -12,7 +12,7 @@ public class DataSourceConfiguration {
   public DataSource getDatabaseDataSource() {
     return DataSourceBuilder.create()
         .driverClassName("org.h2.Driver")
-        .url("jdbc:h2:mem:mydb;DB_CLOSE_DELAY=-1")
+        .url("jdbc:h2:mem:mydb")
         .username("sa")
         .password("")
         .build();
