@@ -1,13 +1,10 @@
 package com.example.paymentapi.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.sun.istack.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
@@ -26,6 +23,9 @@ public class Payment {
   @Column(name = "CREATED_AT")
   @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
   private LocalDateTime createdAt;
+
+  @Column(name = "CALLER_COUNTRY")
+  private String callerCountry;
 
   public Payment(String id, BigDecimal amount, String debtorIban, LocalDateTime createdAt) {
     this.id = id;
@@ -68,5 +68,13 @@ public class Payment {
 
   public void setCreatedAt(LocalDateTime createdAt) {
     this.createdAt = createdAt;
+  }
+
+  public String getCallerCountry() {
+    return callerCountry;
+  }
+
+  public void setCallerCountry(String callerCountry) {
+    this.callerCountry = callerCountry;
   }
 }
