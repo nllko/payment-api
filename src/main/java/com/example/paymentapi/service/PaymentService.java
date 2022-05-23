@@ -8,11 +8,14 @@ import com.univocity.parsers.csv.CsvParserSettings;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PaymentService {
@@ -31,6 +34,9 @@ public class PaymentService {
 
   public void savePaymentFromCsv(MultipartFile file, HttpServletRequest request)
       throws IOException {
+    if (!Objects.equals(file.getContentType(), "text/csv") || file.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
     List<Payment> payments = new ArrayList<>();
     CsvParserSettings settings = new CsvParserSettings();
     settings.setHeaderExtractionEnabled(true);
@@ -60,6 +66,10 @@ public class PaymentService {
         "http://ip-api.com/json/" + ipAddress + "?fields=country";
     RestTemplate restTemplate = new RestTemplate();
     JSONObject jsonObject = new JSONObject(restTemplate.getForObject(uri, String.class));
-    return jsonObject.isEmpty() ? "" : jsonObject.getString("country");
+    if (jsonObject.isNull("country")){
+      return "";
+    } else {
+      return jsonObject.getString("country");
+    }
   }
 }
